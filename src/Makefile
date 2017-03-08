@@ -3,5 +3,5 @@ all:
 	mv main.byte interpretor
 
 clean:
-	rm *.byte 
+	rm interpretor
 	rm -rf _build/

@@ -20,22 +20,34 @@ tell if v is a free variable
 | FLabstract (id,l) -> v != id && fv v l
 
 
-let rec replace (l1,l2) = function
+
+let rec replace (l1,l2) l =
 (*
 replace l1 by l2 in l
 *)
+match l with
 | l when l = l1 -> l2
 | FVar id -> FVar id
 | FApply (lApp1,lApp2) -> 
 	FApply (replace (l1,l2) lApp1,replace (l1,l2) lApp2)
 | FLabstract (id,l) ->
 	match l1 with
-	| FVar id1 when id = id1 ->
+	| FVar id1 when id = id1 -> (* WHY !!!!!! *)
 		FLabstract (id,l)
 	| _ ->
 		FLabstract (id,replace (l1,l2) l)
 
-let rec alpha env = function
+(*##################################################################*)
+(*                         alpha-reduction                          *)
+(*##################################################################*)
+(*
+TODO : faire l'alphe renommage 
+L'alpha renomage n'est nécessaire qu'en cas de conflit dans une beta
+réduction ...
+*)
+
+
+let rec alpha = function
 | FVar id -> ()
 | FApply (l1,l2) -> ()
 | FLabstract (id,l) -> ()
@@ -63,7 +75,7 @@ match l with
 		b1||b2,FApply(l1b,l2b)
 	| FLabstract (id,l) ->
 	begin
-		Printf.printf "Beta reduction %s => %s \n" id (print l2);
+		Printf.printf "- Beta reduction %s => %s \n" id (print l2);
 		true,replace (FVar id,l2) l;
 	end
 
@@ -74,8 +86,8 @@ let beta_prem l =
 	in begin
 		Printf.printf "\n";
 		Printf.printf 
-			"On commence la beta reduction sur %s \n" (print !res);
-		Printf.printf "%s \n" (String.make  33 '=');
+			"On commence la beta reduction sur : %s \n" (print !res);
+		Printf.printf "%s \n" (String.make  35 '=');
 		while !cond do
 			let b = beta !res 
 			in begin
@@ -85,6 +97,8 @@ let beta_prem l =
 					p !res;
 			end
 		done;
+		Printf.printf 
+			"=> Fin de la beta reduction sur : %s \n" (print !res);
 		!res;
 	end
 		
@@ -102,7 +116,7 @@ begin
 	match la with
 	| FApply (l1,l2) when l2 = FVar id && not (fv id l1) ->
 	begin
-		Printf.printf "Eta reduction %s => %s \n" (print l) (print l1);
+		Printf.printf "- Eta reduction %s => %s \n" (print l) (print l1);
 		true,l1;
 	end
 	| _ -> 
@@ -120,8 +134,8 @@ let eta_prem l =
 	in begin
 		Printf.printf "\n";
 		Printf.printf 
-			"On commence la eta reduction sur %s \n" (print !res);
-		Printf.printf "%s \n" (String.make  32 '=');
+			"On commence la eta reduction sur : %s \n" (print !res);
+		Printf.printf "%s \n" (String.make  34 '=');
 		while !cond do
 			let b = eta !res 
 			in begin
@@ -131,6 +145,8 @@ let eta_prem l =
 					p !res;
 			end
 		done;
+		Printf.printf 
+			"=> Fin de la eta reduction sur : %s \n" (print !res);
 		!res;
 	end
 		

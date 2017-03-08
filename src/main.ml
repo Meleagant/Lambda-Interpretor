@@ -43,7 +43,9 @@ let () =
 	try 
 		let lambda = ref (Parser.file Lexer.next_tokens lb) 
 		in begin
-			p !lambda;
+			Printf.printf "On travaille sur :  \n";
+			Printf.printf "================== \n";
+			p_par !lambda;
 			if !parse_only then
 				exit 0
 			else

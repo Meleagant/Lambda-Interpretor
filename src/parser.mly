@@ -3,6 +3,7 @@
 %{
 
 open Ast
+open Exception
 
 %}
 
@@ -25,10 +26,13 @@ file:
 
 lambda :
 	| l = first+ 
-		{match l with 
+		{
+		match l with 
 		| [x] -> x
 		| t::q -> 
-			List.fold_left (fun x y -> FApply (x,y)) t q} 
+			List.fold_left (fun x y -> FApply (x,y)) t q
+		| [] -> raise EmptyParenthesis
+		}
 
 
 first:
@@ -48,11 +52,7 @@ var :
 		{FVar i}
 
 abstraction :
-	| LAMBDA; i = ident; DOT; v = var 
-		{FLabstract (i,v)}
-	| LAMBDA; i = ident; DOT; a = abstraction 
-		{FLabstract (i,a)}
-	| LAMBDA; i = ident; DOT; LPAR; l = lambda; RPAR
+	| LAMBDA; i = ident; DOT; l = lambda
 		{FLabstract (i,l)}
 
 

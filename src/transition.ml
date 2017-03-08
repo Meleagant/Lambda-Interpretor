@@ -86,7 +86,7 @@ let beta_prem l =
 	in begin
 		Printf.printf "\n";
 		Printf.printf 
-			"On commence la beta reduction sur : %s \n" (print !res);
+			"On commence la beta reduction sur : %s \n" (print_app !res);
 		Printf.printf "%s \n" (String.make  35 '=');
 		while !cond do
 			let b = beta !res 
@@ -98,7 +98,7 @@ let beta_prem l =
 			end
 		done;
 		Printf.printf 
-			"=> Fin de la beta reduction sur : %s \n" (print !res);
+			"=> Fin de la beta reduction sur : %s \n" (print_app !res);
 		!res;
 	end
 		
@@ -134,7 +134,7 @@ let eta_prem l =
 	in begin
 		Printf.printf "\n";
 		Printf.printf 
-			"On commence la eta reduction sur : %s \n" (print !res);
+			"On commence la eta reduction sur : %s \n" (print_app !res);
 		Printf.printf "%s \n" (String.make  34 '=');
 		while !cond do
 			let b = eta !res 
@@ -146,7 +146,7 @@ let eta_prem l =
 			end
 		done;
 		Printf.printf 
-			"=> Fin de la eta reduction sur : %s \n" (print !res);
+			"=> Fin de la eta reduction sur : %s \n" (print_app !res);
 		!res;
 	end
 		

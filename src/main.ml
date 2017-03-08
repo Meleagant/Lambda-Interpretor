@@ -45,7 +45,7 @@ let () =
 		in begin
 			Printf.printf "On travaille sur :  \n";
 			Printf.printf "================== \n";
-			p_par !lambda;
+			p !lambda;
 			if !parse_only then
 				exit 0
 			else

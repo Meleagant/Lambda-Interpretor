@@ -31,7 +31,7 @@ lambda :
 		| [x] -> x
 		| t::q -> 
 			List.fold_left (fun x y -> FApply (x,y)) t q
-		| [] -> raise EmptyParenthesis
+		| [] -> assert false
 		}
 
 

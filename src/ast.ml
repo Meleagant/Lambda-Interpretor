@@ -21,7 +21,11 @@ type lambdaW =
 	| WLTerme of lambdaW
 
 
+(* type for \-calculus *)
 
+type ty = 
+	| Basic of int
+	| App of ty*ty
 
 
 

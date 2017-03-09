@@ -7,7 +7,7 @@ open Printer
 
 module Smap = Map.Make(String)
 
-let g = String.make 1 '\x27'
+let g = String.make 1 '\x27' (* g := "'"*) 
 
 
 
@@ -26,6 +26,34 @@ match lambda with
 	Smap.merge (fun key a1 a2 -> Some true) (var l1) (var l2)
 | FLabstract (id,l) ->
 	Smap.merge (fun key a1 a2 -> Some true) (Smap.singleton id true) (var l)
+
+let free id la l2 = 
+	let other = ref
+	["a";"b";"c";"d";"e";"f";"g";"h";"i";"j";"k";"l";"m";"n";"o";"p";"q";"r";"s";"t";"u";"v";"w";"x";"y";"z"] 
+	and used = Smap.merge (fun key a1 a2 -> Some true) (var la) (var l2)
+	and cont = ref true
+	and res = ref ""
+	in
+	let rec aux other = 
+	match other with
+	| [] -> raise Not_found
+	| t:: q -> 
+		if Smap.mem t used then
+			aux q
+		else
+			t
+	in begin
+		while !cont do
+			try begin
+				res := aux !other;
+				cont := false;
+			end
+			with
+			| Not_found -> 
+			other := List.map (fun x -> x^g) !other;
+		done;
+		!res;
+	end
 
 (*##################################################################*)
 (*                         alpha-reduction                          *)
@@ -46,7 +74,8 @@ match l with
 	(* Si On redéfinit la nouvelle variable *)
 		FLabstract (id,la)
 	| _ when Smap.mem id (var l2) ->
-	let new_id = id^g
+	(* Cas de l'alpha-renommage *)
+	let new_id = free id la l2
 	in begin
 		Printf.printf "/!%s On fait un alpha-renommage : %s => %s dans %s \n"
 			lbda id new_id (print_abs l);

@@ -7,13 +7,18 @@ open Lexing
 open Format
 open Transition
 open Printer
+open Typeur
 
 let file_name = ref " "
 and parse_only = ref false
+and type_only = ref false
+and force_exec = ref false
 
 
 let spec = 
-	["--parse-only", Arg.Set parse_only, " stop after parsing"]
+	["--parse-only", Arg.Set parse_only, " stop after parsing";
+	 "--type-only",Arg.Set type_only," stop after typing";
+	 "--force-exec",Arg.Set force_exec," force the execution "]
 
 let usage = "usage: main [optioon] file.lamb"
 
@@ -48,11 +53,29 @@ let () =
 			p !lambda;
 			if !parse_only then
 				exit 0
-			else
+			else 
 			begin
-				lambda := beta_prem !lambda;
-				lambda := eta_prem !lambda;
-				exit 0;
+				Printf.printf "\n";
+				Printf.printf "Début du typage : \n";
+				Printf.printf "================= \n";
+				if typage !lambda then
+					if !type_only then
+						exit 0
+					else
+					begin
+						lambda := beta_prem !lambda;
+						lambda := eta_prem !lambda;
+						exit 0;
+					end
+				else
+					if !force_exec then
+					begin
+						lambda := beta_prem !lambda;
+						lambda := eta_prem !lambda;
+						exit 0;
+					end
+					else
+						exit 0
 			end;
 		end
 	with

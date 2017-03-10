@@ -105,7 +105,8 @@ match t with
 | Basic _ ->
 	print_ty env used t 
 
-
+let p_typ t = 
+	print_ty_app (H.create 17) (H.create 17) t
 
 
 

@@ -27,7 +27,7 @@ type ty =
 	| Basic of int
 	| App of ty*ty
 
-
+exception RecursiveType of ty*ty
 
 
 

@@ -4,7 +4,8 @@ type ident = string
 
 type binop = 
     | ADD | SUB | MULT | DIV
-    | AND | OR
+    | AND | OR | REM 
+    | EQUAL | DIFF
 
 type unop = 
     | NOT

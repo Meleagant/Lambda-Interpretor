@@ -14,6 +14,7 @@
 			{pos with pos_lnum = pos.pos_lnum + 1; pos_bol = pos.pos_cnum}
 
     let kwd_tbl = [
+        "not",NOT;
         "let", LET;
 		"fun", FUN;
         "in", IN;

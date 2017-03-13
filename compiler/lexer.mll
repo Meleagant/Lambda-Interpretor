@@ -15,6 +15,7 @@
 
     let kwd_tbl = [
         "let", LET;
+		"fun", FUN;
         "in", IN;
         "rec", REC;
         "and", AND;
@@ -56,6 +57,7 @@ rule next_tokens = parse
 	| ')' {RPAR}
     | "||" {OR}
     | "&&" {AND}
+	| ',' {COMMA}
 
 	| _ as c  { raise (Lexing_error ("illegal character: " ^ String.make 1 c)) }
 

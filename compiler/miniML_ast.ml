@@ -3,8 +3,9 @@
 type ident = string
 
 type binop = 
-    | ADD | SUB | MULT | DIV
-    | AND | OR | REM 
+    | ADD | SUB | MULT 
+    | DIV | REM
+    | AND | OR 
     | EQUAL | DIFF
 
 type unop = 
@@ -27,3 +28,5 @@ type expr =
     (* let f id1 id2 = e in e *)
     | LetFunRec of ident*(ident list)*expr*expr
     (* let rec f id1 id2 = e in e *)
+
+exception UndifinedVar of ident

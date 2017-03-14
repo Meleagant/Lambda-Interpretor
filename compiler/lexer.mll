@@ -46,7 +46,7 @@ rule next_tokens = parse
     | ident as s {id_or_kwd s}
     | integer as s { CONST (Int (int_of_string s))}
     | space {next_tokens lexbuf}
-    | '\n' {newline lexbf; next_tokens lexbuf}
+    | '\n' {newline lexbuf; next_tokens lexbuf}
     | '+' {PLUS}
     | '-' {SUB}
     | '*' {TIMES}

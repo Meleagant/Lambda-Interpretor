@@ -48,32 +48,32 @@ file:
 expr:
 	| LPAR; e = expr; RPAR {e}
     | i = const {i}
-    | i = ident {Var i}
+    | i = ident {Var (i,($startpos,$endpos))}
 	| id = ident; arg = separated_nonempty_list(COMMA,expr)
-		{Call (id,arg)}
+		{Call (id,arg,($startpos,$endpos))}
 	| e1 = expr; b = binop; e2 = expr
-		{Binop (b,e1,e2)}
+		{Binop (b,e1,e2,($startpos,$endpos))}
 	| u = unop; e = expr 
-		{Unop (u,e)}
+		{Unop (u,e,($startpos,$endpos))}
 	| IF; e = expr; THEN; e1  = expr; ELSE; e2 = expr
-		{If (e,e1,e2)}
+		{If (e,e1,e2,($startpos,$endpos))}
 	| LET; id = IDENT; FUN; arg =  separated_nonempty_list(COMMA, ident);
 	ARROW; e1 = expr; IN; e = expr
-		{LetFun (id, arg, e1,e)}
+		{LetFun (id, arg, e1,e,($startpos,$endpos))}
 	| LET; REC; id = ident; FUN; arg =
 	separated_nonempty_list(COMMA,ident);
 	ARROW; eret = expr ; IN; e = expr
-		{LetFunRec (id,arg,eret,e)}
+		{LetFunRec (id,arg,eret,e,($startpos,$endpos))}
 	| LET; id = ident; EQUAL; eval = expr; IN; e = expr
-		{LetVar (id,eval,e)}
+		{LetVar (id,eval,e,($startpos,$endpos))}
 
 ident:
 	| i = IDENT {i}
 
 const:
-	| a = CONST {Const a}
-	| TRUE {Const (Bool (true))}
-	| FALSE {Const (Bool (false))}
+	| a = CONST {Const (a,($startpos,$endpos))}
+	| TRUE {Const ((Bool (true)),($startpos,$endpos))}
+	| FALSE {Const ((Bool (false)),($startpos,$endpos))}
 
 unop:
     | NOT {NOT}

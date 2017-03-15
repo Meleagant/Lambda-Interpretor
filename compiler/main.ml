@@ -33,7 +33,7 @@ let report (b,e) =
 	let l = b.pos_lnum in
 	let fc = b.pos_cnum - b.pos_bol + 1 in
 	let lc = e.pos_cnum - b.pos_bol + 1 in
-	eprintf "File \"%s\", line %d, coracter %d-%d: \n" file l fc lc
+	printf "File \"%s\", line %d, coracter %d-%d: \n" file l fc lc
 
 
 let () = 
@@ -50,7 +50,7 @@ let () =
                 if !type_only then
                     exit 0
                 else
-                let lamb = compile ast in
+                let lamb = (compile ast)^"\n" in
                 let file_out = (String.sub file 0 (String.length file -4))^".lamb" in
                 let out = open_out file_out 
                 in begin
@@ -64,14 +64,18 @@ let () =
 	| Lexer.Lexing_error s -> 
 	print_string "CACA \n";
 	report (lexeme_start_p lb , lexeme_end_p lb);
-	eprintf "lexical error %s \n" s;
+	printf "lexical error %s \n" s;
 	exit 1
 	| Parser.Error ->
 	report (lexeme_start_p lb, lexeme_end_p lb);
-	eprintf "syntax error \n";
+	printf "syntax error \n";
+	exit 1
+	| MiniML_ast.TypingError (t1,t2,p) ->
+	report p;
+	printf "This expression is type %s, expected type is %s \n" t1 t2;
 	exit 1
 	| _ -> 
-	eprintf "CACA \n";
+	printf "CACA \n";
 	exit 1
 	
 

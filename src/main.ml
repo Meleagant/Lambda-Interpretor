@@ -40,7 +40,7 @@ let report (b,e) =
 	let l = b.pos_lnum in
 	let fc = b.pos_cnum - b.pos_bol + 1 in
 	let lc = e.pos_cnum - b.pos_bol + 1 in
-	eprintf "File \"%s\", line %d, coracter %d-%d: \n" file l fc lc
+	printf "File \"%s\", line %d, coracter %d-%d: \n" file l fc lc
 
 let () = 
 	let chan = open_in file in
@@ -82,14 +82,14 @@ let () =
 	| Lexer.Lexing_error s -> 
 	print_string "CACA \n";
 	report (lexeme_start_p lb , lexeme_end_p lb);
-	eprintf "lexical error %s \n" s;
+	printf "lexical error %s \n" s;
 	exit 1
 	| Parser.Error ->
 	report (lexeme_start_p lb, lexeme_end_p lb);
-	eprintf "syntax error \n";
+	printf "syntax error \n";
 	exit 1
 	| _ -> 
-	eprintf "CACA \n";
+	printf "CACA \n";
 	exit 1
 	
 

@@ -2,7 +2,7 @@ all:
 	ocamlbuild -use-menhir main.byte
 
 clean:
-	rm interpretor
+	rm main.byte
 	rm -rf *_build/
 
 clear:

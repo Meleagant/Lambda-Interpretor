@@ -46,7 +46,7 @@ begin
 	and s2 = compile_e env e2 in
 	match b with
 	| ADD -> 
-		sprintf "(%s) %s %s" add s1 s2
+		sprintf "(%s) (%s) (%s)" add s1 s2
 	| _ -> assert false
 end
 

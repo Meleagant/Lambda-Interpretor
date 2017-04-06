@@ -33,7 +33,7 @@ open MiniML_ast
 %left AND
 %nonassoc NOT
 %nonassoc EQUAL DIFF
-%left PLUS
+%right PLUS
 %left TIMES DIV REM
 
 %start file

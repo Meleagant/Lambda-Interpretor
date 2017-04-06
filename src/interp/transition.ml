@@ -20,12 +20,15 @@ tell if v is a free variable
 | FLabstract (id,l) -> v != id && fv v l
 
 let rec var lambda = 
+(* 
+Return a map containig all the free variables in lambda 
+*)
 match lambda with 
 | FVar id -> Smap.singleton id true 
 | FApply (l1,l2) -> 
 	Smap.merge (fun key a1 a2 -> Some true) (var l1) (var l2)
 | FLabstract (id,l) ->
-	Smap.merge (fun key a1 a2 -> Some true) (Smap.singleton id true) (var l)
+	Smap.remove id (var l) 
 
 let free id la l2 = 
 	let other = ref
@@ -104,9 +107,12 @@ match l with
 | FApply (l1,l2) ->
 	match l1 with
 	| FVar _ | FApply _ -> 
-		let b1,l1b = beta l1
-		and b2,l2b = beta l2 in
-		b1||b2,FApply(l1b,l2b)
+		let b1,l1b = beta l1 in
+		if b1 then
+			b1,FApply (l1b,l2)
+		else
+			let b2,l2b = beta l2 in
+			b2,FApply(l1,l2b)
 	| FLabstract (id,l) ->
 	begin
 		Printf.printf "- Beta reduction %s <- %s \n" id (print l2);

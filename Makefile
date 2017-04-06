@@ -1,7 +1,7 @@
 all:
-	ocamlbuild -use-menhir src/main.byte
+	ocamlbuild -use-menhir src/interp/main.byte
 	mv main.byte interpretor
-	ocamlbuild -use-menhir compiler/main.byte
+	ocamlbuild -use-menhir src/compil/main.byte
 	mv main.byte compiler
 
 clean:

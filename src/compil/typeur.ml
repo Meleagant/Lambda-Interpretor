@@ -6,6 +6,7 @@ type typ =
     | Int
     | Bool
     | FUN of typ*typ
+	| PAIR of typ*typ
 
 type env = typ Smap.t
 
@@ -13,6 +14,7 @@ let rec print_typ = function
 | Int -> "int"
 | Bool -> "bool"
 | FUN (t1,t2) -> Format.sprintf "%s -> %s" (print_typ t1) (print_typ t2)
+| PAIR (t1,t2) -> Format.sprintf "(%s*%s)" (print_typ t1) (print_typ t2)
 
 let extract_pos = function
 | Const (_,p) -> p

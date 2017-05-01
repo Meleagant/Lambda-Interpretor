@@ -7,10 +7,18 @@ module Smap = Map.Make(String)
 type env = string Smap.t
 
 let lamb = String.make 1 '\x5c'
+
+let tru = sprintf "%sa.%sb.a" lamb lamb
+let fal = sprintf "%sa.%sb.b" lamb lamb
+
 let succ = sprintf "%sn.%sf.%sx.f (n f x)" lamb lamb lamb
 let add = sprintf "%sm.%sn.m (%s) n" lamb lamb succ
 let mult = sprintf "%sm.%sn.%sf. m (n f)" lamb lamb lamb
-
+(*
+TODO
+let isnull = sprintf "
+let pred = sprintf "hh
+*)
 
 
 
@@ -31,9 +39,9 @@ begin
 	| Int x -> compile_int x
 	| Bool b -> 
 		if b then
-			sprintf "%sa.%sb.a" lamb lamb
+			tru
 		else
-			sprintf "%sa.%sb.b" lamb lamb
+			fal
 end
 | Var (id,_) ->
 	Smap.find id env

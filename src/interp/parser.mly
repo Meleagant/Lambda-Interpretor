@@ -21,27 +21,22 @@ open Exception
 %%
 
 file: 
-	l = lambda; EOF
+    | l = application; EOF
 		{l}
 
-lambda :
-	| l = first+ 
-		{
-		match l with 
-		| [x] -> x
-		| t::q -> 
-			List.fold_left (fun x y -> FApply (x,y)) t q
-		| [] -> assert false
-		}
+application:
+    | l = atom+ 
+    {List.fold_left 
+    (fun l1  l2 -> FApply(l1,l2) )
+        (List.hd l)
+        (List.tl l)
+    }
 
+atom :
+    | LPAR; a = application; RPAR {a}
+    | a = abstraction {a}
+    | v = var {v}
 
-first:
-	| v = var 
-		{v}
-	| LPAR; l = lambda; RPAR
-		{l}
-	| l = abstraction
-		{l}
 
 ident:
 	| i = IDENT 
@@ -52,7 +47,7 @@ var :
 		{FVar i}
 
 abstraction :
-	| LAMBDA; i = ident; DOT; l = lambda
+	| LAMBDA; i = ident; DOT; l = application
 		{FLabstract (i,l)}
 
 

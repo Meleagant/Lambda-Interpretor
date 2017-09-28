@@ -7,6 +7,11 @@ type typ =
     | Bool
     | FUN of typ*typ
 	| PAIR of typ*typ
+    | Tvar of tvar
+
+and tvar = 
+    { id : int;
+      mutable def : typ option }
 
 type env = typ Smap.t
 
@@ -15,6 +20,10 @@ let rec print_typ = function
 | Bool -> "bool"
 | FUN (t1,t2) -> Format.sprintf "%s -> %s" (print_typ t1) (print_typ t2)
 | PAIR (t1,t2) -> Format.sprintf "(%s*%s)" (print_typ t1) (print_typ t2)
+| Tvar var -> 
+    match var.def with
+    | None -> assert false
+    | Some t -> print_typ t
 
 let extract_pos = function
 | Const (_,p) -> p
@@ -102,7 +111,7 @@ begin
     typing_e new_env e
 end
 
-| LetFun _ -> assert false
+| LetFun (name,arg,expr_func,expr_final,p) -> assert false
 
 | LetFunRec _ -> assert false
 

@@ -2,9 +2,13 @@
 OCBFLAGS = -I src
 OCB = ocamlbuild -use-menhir -use-ocamlfind $(OCBFLAGS)
 
-all: 
+all: interp compil
+
+interp:
 	$(OCB) src/interp/main.byte
 	mv main.byte interpretor
+	
+compil:
 	$(OCB) src/compil/main.byte
 	mv main.byte compiler
 

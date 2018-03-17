@@ -11,28 +11,37 @@ module H = Hashtbl
 
 let compt = ref 0
 
-let new_type () = 
+(**
+Return a new fresh type
+*)
+let new_type () =
 begin
 	incr compt;
 	Basic !compt;
 end
 
+(**
+Exception raised when the first type contains himself
+*)
 exception RecType of ty*ty
 
 type env = (int,ty) H.t
 
-let rec noSubTyp t tApp = 
+(**
+Raise the RecursuveType exception when t is a subtyp of tApp
+*)
+let rec noSubTyp t tApp =
 match tApp with
-| App (t1,t2) when t = t1 || t = t2 -> 
+| App (t1,t2) when t = t1 || t = t2 ->
 	raise (RecursiveType (t,tApp))
-| App (t1,t2) -> 
+| App (t1,t2) ->
 	begin
-		noSubTyp t t1; 
+		noSubTyp t t1;
 		noSubTyp t t2;
 	end
 | Basic _ -> ()
 
-let rec inR t1 t2 = 
+let rec inR t1 t2 =
 (* Check if t1 R t2 *)
 match t1,t2 with
 | Basic _ , Basic _ -> ()
@@ -42,20 +51,22 @@ match t1,t2 with
 	inR t2 t1
 | App (t1g,t1d), App (t2g,t2d) -> ()
 
+(** A mini pretty printer for type *)
 let rec proto_print t =
 match t with
 | Basic i -> string_of_int i
 | App (t1,t2) ->
 	"("^(proto_print t1)^" -> "^(proto_print t2)^")"
 
-let print_env env = 
-	let aux id t = 
+(** print the envirronment *)
+let print_env env =
+	let aux id t =
 	Printf.printf "L'ident %s est de type %s \n" id (proto_print t)
 	in
 	H.iter aux env
 
 
-let rec enrichie t1 t2 = 
+let rec enrichie t1 t2 =
 match t1,t2 with
 | Basic i1, Basic i2 -> Basic i1
 | App (t1g,t1d), App (t2g,t2d) ->
@@ -66,28 +77,32 @@ match t1,t2 with
 
 
 let replace env t nt =
-	let rec aux t_previous = 
+	let rec aux t_previous =
 		if t = t_previous then
 			nt
 		else match t_previous with
 		| Basic _ -> t_previous
 		| App (t1,t2) ->
-			App (aux t1,aux t2) 
+			App (aux t1,aux t2)
 	in begin
 	H.iter (fun id t -> H.replace env id (aux t)) env;
 	end
 
+(** replace all the types of the previous environment with those computed
+in the new one *)
 let merge env new_env =
 	H.iter (fun id t -> H.replace env id t) new_env
 
 
-let rec typable t l env = 
+(** check if the type t can be applied to the lambda term l in the
+envirronemnt. Returns a new, more accurate type *)
+let rec typable t l env =
 match l with
 | FVar id ->
 begin
 	if not (H.mem env id) then
-		H.add env id (new_type () );
-	let tl = H.find env id 
+		H.add env id t;
+	let tl = H.find env id
 	in begin
 		inR t tl;
 		let new_t = enrichie tl t
@@ -104,22 +119,22 @@ begin
 	let proto_t1 = App (t2,t) in
 	let t1 = typable proto_t1 l1 env in
 	match t1 with
-	| App (tg,td) -> td 
+	| App (tg,td) -> td
 	| _ -> assert false
 end
-| FLabstract (id,la) -> 
+| FLabstract (id,la) ->
 begin
-	let tg,td = 
+	let tg,td =
 		match t with
 		| Basic i -> new_type (),new_type ()
 		| App (tg,td) -> (tg,td)
 	in
-	let new_env  = H.copy env 
+	let new_env  = H.copy env
 	in begin
 		H.add new_env id tg;
 		let t_res = typable td la new_env in
 		let t_tot = App(H.find new_env id,t_res) in
-		let t_fin = enrichie t t_tot 
+		let t_fin = enrichie t t_tot
 		in begin
 			inR t t_fin;
 			merge env new_env;
@@ -129,9 +144,9 @@ begin
 	end;
 end
 
-let typage l = 
-begin 
-	try 
+let typage l =
+begin
+	try
 	begin
 		let t = typable (new_type ()) l (H.create 17) in
 		Printf.printf "Le type de l'expression est : %s \n" (p_typ t);
@@ -146,12 +161,3 @@ begin
 		false;
 	end
 end
-
-
-
-
-
-
-
-
-

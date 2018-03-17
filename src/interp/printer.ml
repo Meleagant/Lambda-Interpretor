@@ -8,13 +8,28 @@ open Ast
 
 let lbda = String.make 1 '\x5c'
 
+(**
+ * Add parenthesis around the string
+ *)
 let par str = "("^str^")"
 
 let rec print lambda = 
 match lambda with
 | FVar id  -> id
-| FApply (l1,l2) -> par (print_app lambda)
-| FLabstract (id,l) -> par (print_abs lambda)
+| FApply (l1,l2) -> print_left l1 ^" "^ (print_right l2)
+| FLabstract (id,l) -> print_abs lambda
+
+and print_left lamb = 
+match lamb with
+| FVar id -> id
+| FApply (l1, l2) -> print_left l1 ^" "^ (print_right l2)
+| FLabstract (id, l) -> par (print_abs lamb)
+
+and print_right lamb =
+match lamb with
+| FVar id -> id
+| FApply (l1,l2) -> par (print_left l1 ^" "^ (print_right l2))
+| FLabstract _ -> print_abs lamb
 
 and print_app lambda =
 match lambda with
@@ -25,10 +40,10 @@ match lambda with
 and print_abs lambda = 
 match lambda with
 | FLabstract (id,l) ->
-	lbda^id^"."^(print_abs l)
+	lbda^id^"."^(print l)
 | _ -> print lambda
 
-let p l = Printf.printf "%s \n" (print_app l)
+let p l = Printf.printf "%s\n" (print l)
 
 let rec print_par = function
 | FVar id -> id
@@ -37,7 +52,7 @@ let rec print_par = function
 | FLabstract (id,l) ->
 	"("^lbda^id^"."^(print_par l)^")"
 
-let p_par l = Printf.printf "%s \n" (print_par l)
+let p_par l = Printf.printf "%s" (print_par l)
 
 
 
@@ -50,8 +65,8 @@ module H = Hashtbl
 let new_id env = 
 let l_typ =  
 ["a";"b";"c";"d";"e";"f";"g";"h";"i";"j";"k";"l";"m";"n";"o";"p";"q";"r";"s";"t";"u";"v";"w";"x";"y";"z"] 
-and compt = ref 1 
-in
+and compt = ref 1 in
+let l_typ = List.map (fun x -> "'"^x) l_typ in 
 let curr = ref l_typ in
 let rec aux curr = 
 	match curr with

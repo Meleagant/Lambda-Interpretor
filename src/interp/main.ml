@@ -13,12 +13,14 @@ let file_name = ref " "
 and parse_only = ref false
 and type_only = ref false
 and force_exec = ref false
+and out = ref false
 
 
 let spec = 
 	["--parse-only", Arg.Set parse_only, " stop after parsing";
 	 "--type-only",Arg.Set type_only," stop after typing";
-	 "--force-exec",Arg.Set force_exec," force the execution "]
+     "--force-exec",Arg.Set force_exec," force the execution ";
+     "-v", Arg.Set out, "\t Display all the beta-eta réduction "]
 
 let usage = "usage: main [optioon] file.lamb"
 
@@ -56,8 +58,8 @@ let () =
 			else 
 			begin
 				Printf.printf "\n";
-				Printf.printf "Début du typage : \n";
-				Printf.printf "================= \n";
+				Printf.printf "Typage : \n";
+				Printf.printf "======== \n";
 				if typage !lambda then
 					if !type_only then
 						exit 0
@@ -65,6 +67,10 @@ let () =
 					begin
 						lambda := beta_prem !lambda;
 						lambda := eta_prem !lambda;
+                        Printf.printf "\n";
+                        Printf.printf "Résultat : \n";
+                        Printf.printf "========== \n";
+                        p !lambda;
 						exit 0;
 					end
 				else
@@ -72,6 +78,10 @@ let () =
 					begin
 						lambda := beta_prem !lambda;
 						lambda := eta_prem !lambda;
+                        Printf.printf "\n";
+                        Printf.printf "Résultat : \n";
+                        Printf.printf "========== \n";
+                        p !lambda;
 						exit 0;
 					end
 					else

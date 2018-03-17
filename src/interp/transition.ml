@@ -3,16 +3,20 @@
 (*##################################################################*)
 
 open Ast
-open Printer
+module PP = Printer
 
 module Smap = Map.Make(String)
 
 let g = String.make 1 '\x27' (* g := "'"*) 
+let lbda = PP.lbda
 
+let out = Array.mem "-v" Sys.argv
 
+let alphabet = 
+	["a";"b";"c";"d";"e";"f";"g";"h";"i";"j";"k";"l";"m";"n";"o";"p";"q";"r";"s";"t";"u";"v";"w";"x";"y";"z"] 
 
 let rec fv v = function
-(*
+(**
 tell if v is a free variable 
 *)
 | FVar id -> id = v
@@ -20,7 +24,7 @@ tell if v is a free variable
 | FLabstract (id,l) -> v != id && fv v l
 
 let rec var lambda = 
-(* 
+(** 
 Return a map containig all the free variables in lambda 
 *)
 match lambda with 
@@ -31,8 +35,7 @@ match lambda with
 	Smap.remove id (var l) 
 
 let free id la l2 = 
-	let other = ref
-	["a";"b";"c";"d";"e";"f";"g";"h";"i";"j";"k";"l";"m";"n";"o";"p";"q";"r";"s";"t";"u";"v";"w";"x";"y";"z"] 
+	let other = ref alphabet
 	and used = Smap.merge (fun key a1 a2 -> Some true) (var la) (var l2)
 	and cont = ref true
 	and res = ref ""
@@ -80,9 +83,9 @@ match l with
 	(* Cas de l'alpha-renommage *)
 	let new_id = free id la l2
 	in begin
-		Printf.printf "/!%s On fait un alpha-renommage : %s => %s dans %s \n"
-			lbda id new_id (print_abs l);
-
+        if out then
+		    Printf.printf "    \027[94malpha-renommage :\027[0m %s => %s dans %s \n"
+			id new_id (PP.print_abs l);
 		FLabstract (new_id,replace (l1,l2) (replace (FVar id,FVar new_id)
 		la));
 	end
@@ -96,7 +99,7 @@ match l with
 
 
 let rec beta l  =
-(*
+(**
 We follow the leftmost outermost strategy
 *)
 match l with
@@ -115,33 +118,32 @@ match l with
 			b2,FApply(l1,l2b)
 	| FLabstract (id,l) ->
 	begin
-		Printf.printf "- Beta reduction %s <- %s \n" id (print l2);
+        if out then
+		    Printf.printf "  \027[92mBeta reduction\027[0m %s <- %s \n" id (PP.print l2);
 		true,replace (FVar id,l2) l;
 	end
 
 
-let beta_prem l = 
-	let cond = ref true 
+let beta_prem l =
+    let cond = ref true 
 	and res = ref l 
 	in begin
 		Printf.printf "\n";
 		Printf.printf 
-			"On commence la beta reduction sur : %s \n" (print_app !res);
+		    "On commence la beta reduction sur : %s \n" (PP.print !res);
 		Printf.printf "%s \n" (String.make  35 '=');
-		while !cond do
+        while !cond do
 			let b = beta !res 
 			in begin
 				cond :=  fst b;
 				res := snd b;
-				if !cond then
-					p !res;
+				if !cond && out then
+					PP.p !res;
 			end;
-			Printf.printf "\n";
 		done;
-		Printf.printf 
-			"=> Fin de la beta reduction sur : %s \n" (print_app !res);
-		Printf.printf "\n";
-		!res;
+        Printf.printf 
+		    "=> Fin de la beta reduction sur : %s \n" (PP.print !res);
+        !res;
 	end
 		
 
@@ -158,7 +160,8 @@ begin
 	match la with
 	| FApply (l1,l2) when l2 = FVar id && not (fv id l1) ->
 	begin
-		Printf.printf "- Eta reduction %s <- %s \n" (print l) (print l1);
+        if out then
+		    Printf.printf "- Eta reduction %s <- %s \n" (PP.print l) (PP.print l1);
 		true,l1;
 	end
 	| _ -> 
@@ -176,21 +179,19 @@ let eta_prem l =
 	in begin
 		Printf.printf "\n";
 		Printf.printf 
-			"On commence la eta reduction sur : %s \n" (print_app !res);
+		    "On commence la eta reduction sur : %s \n" (PP.print !res);
 		Printf.printf "%s \n" (String.make  34 '=');
-		while !cond do
+        while !cond do
 			let b = eta !res 
 			in begin
 				cond :=  fst b;
 				res := snd b;
-				if !cond then
-					p !res;
+				if !cond && out then
+					PP.p !res;
 			end;
-			Printf.printf "\n";
 		done;
 		Printf.printf 
-			"=> Fin de la eta reduction sur : %s \n" (print_app !res);
-		Printf.printf "\n";
+		    "=> Fin de la eta reduction sur : %s \n" (PP.print !res);
 		!res;
 	end
 		

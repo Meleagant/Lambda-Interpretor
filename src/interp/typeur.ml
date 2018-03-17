@@ -139,10 +139,10 @@ begin
 	end
 	with RecursiveType (t1,t2) ->
 	begin
-		Printf.printf "! %s ! \n" (String.make 25 '-');
+		Printf.printf "\027[31m! %s ! \027[0m\n" (String.make 25 '-');
 		Printf.printf "On observe un type recursif \n";
-		Printf.printf "%s => %s \n" (p_typ t1) (p_typ t2);
-		Printf.printf "Typing FAILED !!!!! \n \n";
+		Printf.printf "%s := %s \n" (p_typ t1) (p_typ t2);
+		Printf.printf "\027[31mTyping FAILED !!!!! \027[0m\n \n";
 		false;
 	end
 end

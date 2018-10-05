@@ -2,20 +2,18 @@
 OCBFLAGS = -I src
 OCB = ocamlbuild -use-menhir -use-ocamlfind $(OCBFLAGS)
 
-all: interp compil
+all: interp # compil
 
 interp:
-	$(OCB) src/interp/main.byte
-	mv main.byte interpretor
-	
+	$(OCB) src/interp/main.native
+	mv main.native interpretor
+
 compil:
-	$(OCB) src/compil/main.byte
-	mv main.byte compiler
+	$(OCB) src/compil/main.native
+	mv main.native compiler
 
 clean:
 	$(OCB) -clean
 
-clear:
-	rm *.cmx *.cmi *.o *~ *.out
-
-
+realclear:
+	rm -f *.cmx *.cmi *.o *~ *.out

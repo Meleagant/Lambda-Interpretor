@@ -1,4 +1,5 @@
 S src/compil/
 S src/interp/
-B _build/src/compil
-B _build/src/interp
+
+B _build/src/compil/
+B _build/src/interp/

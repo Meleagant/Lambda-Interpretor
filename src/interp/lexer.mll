@@ -7,9 +7,9 @@
 
 	exception Lexing_error of string
 
-	let newline lexbuf = 
+	let newline lexbuf =
 		let pos = lexbuf.lex_curr_p in
-		lexbuf.lex_curr_p <- 
+		lexbuf.lex_curr_p <-
 			{pos with pos_lnum = pos.pos_lnum +1;
 			 pos_bol = pos.pos_cnum }
 }
@@ -32,37 +32,11 @@ rule next_tokens = parse
 	| ')' {RPAR}
 	| ident as s {IDENT s}
 	|'\n' {newline lexbuf; next_tokens lexbuf}
-	| _ as c 
+	| "--" {comment lexbuf}
+	| _ as c
 		{raise (Lexing_error ("illegal character : "^ String.make 1 c))}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+and comment = parse
+	| '\n' {newline lexbuf; next_tokens lexbuf}
+	| eof {EOF}
+	| _ {comment lexbuf}

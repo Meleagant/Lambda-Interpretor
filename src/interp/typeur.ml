@@ -7,6 +7,7 @@ open Printer
 
 module H = Hashtbl
 
+let out = Array.mem "-v" Sys.argv
 
 
 let compt = ref 0
@@ -28,7 +29,7 @@ exception RecType of ty*ty
 type env = (int,ty) H.t
 
 (**
-Raise the RecursuveType exception when t is a subtyp of tApp
+Raise the RecursiveType exception when t is a subtyp of tApp
 *)
 let rec noSubTyp t tApp =
 match tApp with
@@ -154,7 +155,7 @@ begin
 	end
 	with RecursiveType (t1,t2) ->
 	begin
-		Printf.printf "\027[31m! %s ! \027[0m\n" (String.make 25 '-');
+		Printf.printf "\027[31m! %s ! \027[0m\n" (String.make 25 '=');
 		Printf.printf "On observe un type recursif \n";
 		Printf.printf "%s := %s \n" (p_typ t1) (p_typ t2);
 		Printf.printf "\027[31mTyping FAILED !!!!! \027[0m\n \n";

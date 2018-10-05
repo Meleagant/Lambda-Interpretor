@@ -36,3 +36,5 @@ type expr =
 
 exception UndifinedVar of ident*pos
 exception TypingError of string*string*pos
+
+exception NotImplemented

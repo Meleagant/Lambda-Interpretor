@@ -17,6 +17,7 @@ type lambdaF =
 
 type lambdaW = 
 	| WVar of int
+  | WFreeVar of ident
 	| WApply of lambdaW*lambdaW
 	| WLTerme of lambdaW
 
@@ -28,22 +29,6 @@ type ty =
 	| App of ty*ty
 
 exception RecursiveType of ty*ty
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

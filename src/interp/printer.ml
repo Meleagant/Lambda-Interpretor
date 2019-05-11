@@ -5,8 +5,8 @@
 open Ast
 
 
-(** the '\' character  *)
-let lbda = String.make 1 '\x5c'
+(** the 'λ' character  *)
+let lamb = "λ"
 
 (**
  * Add parenthesis around the string
@@ -40,7 +40,7 @@ match lambda with
 and print_abs lambda =
 match lambda with
 | FLabstract (id,l) ->
-	lbda^id^"."^(print l)
+	lamb^id^"."^(print l)
 | _ -> print lambda
 
 let p l = Printf.printf "%s\n" (print l)
@@ -50,7 +50,7 @@ let rec print_par = function
 | FApply (l1,l2) ->
 	"("^(print_par l1)^" "^(print_par l2)^")"
 | FLabstract (id,l) ->
-	"("^lbda^id^"."^(print_par l)^")"
+	"("^lamb^id^"."^(print_par l)^")"
 
 let p_par l = Printf.printf "%s" (print_par l)
 
@@ -59,7 +59,6 @@ let p_par l = Printf.printf "%s" (print_par l)
 (*                 Printer for DB indices                  *)
 
 
-let lamb = "λ"
 
 let rec print_term = function 
   | WVar i -> Printf.sprintf "%d" i

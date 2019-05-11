@@ -3,7 +3,7 @@
 
 {
 	open Lexing
-	open Parser
+	open Lamb_parser
 
 	exception Lexing_error of string
 

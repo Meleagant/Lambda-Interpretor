@@ -2,13 +2,13 @@
 (*              main file  *)
 (*###########################################################################*)
 
-open Parser
+open Lamb_parser
 open Lexing
 open Format
 open Transition
 open Printer
 open Convert
-open Typeur
+open Lamb_typer
 
 let file_name = ref " "
 and parse_only = ref false
@@ -49,7 +49,7 @@ let () =
 	let chan = open_in file in
 	let lb = Lexing.from_channel chan in
 	try
-		let lambda = ref (Parser.file Lexer.next_tokens lb)
+		let lambda = ref (Lamb_parser.file Lamb_lexer.next_tokens lb)
 		in begin
 			Printf.printf "On travaille sur :  \n";
 			Printf.printf "================== \n";
@@ -103,7 +103,7 @@ let () =
 	report (lexeme_start_p lb , lexeme_end_p lb);
 	printf "lexical error %s \n" s;
 	exit 1
-	| Parser.Error ->
+	| Lamb_parser.Error ->
 	report (lexeme_start_p lb, lexeme_end_p lb);
 	printf "syntax error \n";
 	exit 1
